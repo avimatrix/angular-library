@@ -1,0 +1,17 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/ivtool",
+  "lib": {
+    "entryFile": "src/public-api.ts",
+    "cssUrl": "inline",
+    "styleIncludePaths": [
+      "node_modules/primeng/resources/themes/nova-light/theme.css",
+      "node_modules/primeng/resources/primeng.min.css",
+      "node_modules/primeicons/primeicons.css",
+      "node_modules/bootstrap/dist/css/bootstrap.min.css"
+    ]
+  },
+  "whitelistedNonPeerDependencies": [
+    "."
+  ]
+}

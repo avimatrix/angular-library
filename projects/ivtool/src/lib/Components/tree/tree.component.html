@@ -1,0 +1,90 @@
+<div class="tree-view-panel">
+  <div class="d-inline-flex flex-wrap w-100">
+    <span *ngIf="itemsList?.length>0" (click)="expandCollapseTree()" class="Expand-btn d-inline-flex cursor-pointer"
+      [ngClass]="isExpand?'fa fa-caret-down':'fa fa-caret-right'"></span><span
+      class="text-expand theme-secondary-text">{{isExpand?'Collapse all':'Expand all'}}</span>
+    <span *ngIf="isAddBtnVisible" class="material-icons ml-auto theme-secondary-text add-btn-folder cursor-pointer"
+      (click)="setDefaultValues()" data-toggle="modal" data-target="#addPopup" title="Add {{itemType}}">
+      add_circle
+    </span>
+  </div>
+  <p-tree [value]="itemsList" [filter]="true" [contextMenu]="cm" selectionMode="single" [(selection)]="selectedItem"
+    (onNodeContextMenuSelect)="showMenu(true)" (onNodeSelect)="nodeSelect()" [filterPlaceholder]="filterPlaceHolder">
+    <ng-template let-node pTemplate="default">
+      <div class="d-flex">
+        <div class="overflow-text">
+          <span title="{{node.name}}">{{node.name}}</span>
+        </div>
+        <span class="ml-auto elipsis-icon fa fa-ellipsis-h" title="actions" *ngIf="showContextMenu"
+          (click)="cm.show($event);$event.stopPropagation();selectedNode=node;showMenu(false)"></span>
+      </div>
+    </ng-template>
+  </p-tree>
+  <p-contextMenu #cm [model]="items"></p-contextMenu>
+</div>
+
+
+<div class="modal fade" id="addPopup" tabindex="-1" role="dialog" aria-labelledby="addItem" aria-hidden="true"
+  data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" *ngIf="isSubItem">Add sub {{itemType | lowercase}}</h5>
+        <h5 class="modal-title" *ngIf="!isSubItem">Add {{itemType | lowercase}}</h5>
+        <button type="button" class="close" aria-label="Close" data-dismiss="modal" (click)="closeAddItem()"
+          style="outline:none !important; border:none !important;" #closeAddItemPopup>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #addForm="ngForm">
+        <div class="modal-body">
+          <div class="font-weight-600 mb-2" *ngIf="isSubItem">{{itemPath}}</div>
+          <input type="text" class="form-control" placeholder="Name" maxlength="40" trim="blur" autocomplete="off"
+            [(ngModel)]="title" name="categoryTitle" #categoryTitle="ngModel" required
+            [class.inValid-Input]="categoryTitle.invalid && (categoryTitle.dirty || categoryTitle.touched || isAddSubmitted)" />
+          <small class="text-danger"
+            *ngIf="categoryTitle.invalid && (categoryTitle.dirty || categoryTitle.touched || isAddSubmitted)">Name
+            required</small>
+        </div>
+      </form>
+      <form>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" (click)="validateAddItem()">Add</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div #subItemPopup data-toggle="modal" data-target="#addPopup"></div>
+<div #renameItemPopup data-toggle="modal" data-target="#renamePopup"></div>
+
+<div class="modal fade" id="renamePopup" tabindex="-1" role="dialog" aria-labelledby="renameItem" aria-hidden="true"
+  data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Rename {{itemType | lowercase}}</h5>
+        <button type="button" class="close" style="outline:none !important; border:none !important;" aria-label="Close"
+          data-dismiss="modal" (click)="closeRenamePopUp()" #closeRenameItemPopup>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #renameForm="ngForm">
+        <div class="modal-body">
+          <div class="font-weight-600 mb-2">{{itemPath}}</div>
+          <input type="text" class="form-control" placeholder="Name" trim="blur" [(ngModel)]="name" maxlength="40"
+            autocomplete="off" name="renameCategoryTitle" #renameCategoryTitle="ngModel" required
+            [class.inValid-Input]="renameCategoryTitle.invalid && (renameCategoryTitle.dirty || renameCategoryTitle.touched || renameForm.submitted)" />
+          <small class="text-danger"
+            *ngIf="renameCategoryTitle.invalid && (renameCategoryTitle.dirty || renameCategoryTitle.touched || renameForm.submitted)">Name
+            required</small>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" [disabled]="disableRename()"
+            (click)="renameForm.valid && updateItemName()">Rename</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
